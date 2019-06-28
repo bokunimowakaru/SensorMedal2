@@ -1,9 +1,19 @@
 --------------------------------------------------------------------------------
 # BLE Logger for Rohm SensorMedal-EVK-002
 
-## Raspberry Piを使って、センサメダルのセンサ情報を表示します。
+### Raspberry Piを使って、ローム製「センサメダル」のセンサ情報を表示します。
 
 --------------------------------------------------------------------------------
+## ファイル
+
+	表示のみ：
+	ble_logger_SensorMedal2.py  
+	
+	保存機能付き：
+	ble_logger_SensorMedal2_save.py
+	
+	IoT用クラウドサービスAmbientへの送信機能付き：
+	ble_logger_SensorMedal2_ambient.py
 
 ## インストール方法
 
