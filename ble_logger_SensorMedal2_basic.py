@@ -2,7 +2,7 @@
 # coding: utf-8
 
 ################################################################################
-# BLE Logger for Rohm SensorMedal-EVK-002
+# BLE Logger for Rohm SensorMedal-EVK-002 [基本]
 # Raspberry Piを使って、センサメダルのセンサ情報を表示します。
 #
 #                                               Copyright (c) 2019 Wataru KUNINO
