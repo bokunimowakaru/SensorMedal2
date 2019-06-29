@@ -21,6 +21,8 @@
 
 ambient_chid='0000'                 # ここにAmbientで取得したチャネルIDを入力
 ambient_wkey='0123456789abcdef'     # ここにはライトキーを入力
+ambient_interval = 30               # Ambientへの送信間隔
+interval = 3                        # 動作間隔
 
 from bluepy import btle
 from sys import argv
@@ -45,31 +47,34 @@ def payval(num, bytes=1, sign=False):
     return a
 
 scanner = btle.Scanner()
-interval = 3 # 動作間隔 始めの1回目だけ3秒。その後、30秒
+sensors = dict()
+time = 999
+isMedalAvail = False
+if ambient_interval < 30:
+    ambient_interval = 30
+
 while True:
     # BLE受信処理
     try:
         devices = scanner.scan(interval)
     except Exception as e:
-        print(e)
+        print("ERROR",e)
         if getpass.getuser() != 'root':
             print('使用方法: sudo', argv[0])
             exit()
         sleep(interval)
         continue
-    if interval < 30:
-        interval = 30
 
     # 受信データについてBLEデバイス毎の処理
     for dev in devices:
         print("\nDevice %s (%s), RSSI=%d dB" % (dev.addr,dev.addrType,dev.rssi))
         isRohmMedal = False
-        sensors = dict()
         for (adtype, desc, val) in dev.getScanData():
             print("  %s = %s" % (desc, val))
             if desc == 'Short Local Name' and val[0:10] == 'ROHMMedal2':
                 isRohmMedal = True
             if isRohmMedal and desc == 'Manufacturer':
+                isMedalAvail = True
 
                 # センサ値を辞書型変数sensorsへ代入
                 sensors['ID'] = hex(payval(2,2))
@@ -114,30 +119,33 @@ while True:
                 print('    Steps         =',sensors['Steps'],'歩')
                 print('    Battery Level =',sensors['Battery Level'],'%')
 
-                # クラウドへの送信処理
-                if int(ambient_chid) == 0:
-                    continue
-                body_dict['d1'] = sensors['Temperature']
-                body_dict['d2'] = sensors['Humidity']
-                body_dict['d3'] = sensors['Pressure']
-                body_dict['d4'] = sensors['Illuminance']
-                body_dict['d5'] = sensors['Accelerometer']
-                body_dict['d6'] = sensors['Geomagnetic']
-                body_dict['d7'] = sensors['Steps']
-                body_dict['d8'] = sensors['Battery Level']
+    # クラウドへの送信処理
+    if int(ambient_chid) == 0 or not isMedalAvail or time < ambient_interval / interval:
+        time += 1
+        continue
+    time = 0
+    isMedalAvail = False
+    body_dict['d1'] = sensors['Temperature']
+    body_dict['d2'] = sensors['Humidity']
+    body_dict['d3'] = sensors['Pressure']
+    body_dict['d4'] = sensors['Illuminance']
+    body_dict['d5'] = sensors['Accelerometer']
+    body_dict['d6'] = sensors['Geomagnetic']
+    body_dict['d7'] = sensors['Steps']
+    body_dict['d8'] = sensors['Battery Level']
 
-                print(head_dict)                                # 送信ヘッダhead_dictを表示
-                print(body_dict)                                # 送信内容body_dictを表示
-                post = urllib.request.Request(url_s, json.dumps(body_dict).encode(), head_dict)
-                                                                # POSTリクエストデータを作成
-                try:                                            # 例外処理の監視を開始
-                    res = urllib.request.urlopen(post)          # HTTPアクセスを実行
-                except Exception as e:                          # 例外処理発生時
-                    print(e,url_s)                              # エラー内容と変数url_sを表示
-                res_str = res.read().decode()                   # 受信テキストを変数res_strへ
-                res.close()                                     # HTTPアクセスの終了
-                if len(res_str):                                # 受信テキストがあれば
-                    print('Response:', res_str)                 # 変数res_strの内容を表示
-                else:
-                    print('Done')                               # Doneを表示
+    print(head_dict)                                # 送信ヘッダhead_dictを表示
+    print(body_dict)                                # 送信内容body_dictを表示
+    post = urllib.request.Request(url_s, json.dumps(body_dict).encode(), head_dict)
+                                                    # POSTリクエストデータを作成
+    try:                                            # 例外処理の監視を開始
+        res = urllib.request.urlopen(post)          # HTTPアクセスを実行
+    except Exception as e:                          # 例外処理発生時
+        print(e,url_s)                              # エラー内容と変数url_sを表示
+    res_str = res.read().decode()                   # 受信テキストを変数res_strへ
+    res.close()                                     # HTTPアクセスの終了
+    if len(res_str):                                # 受信テキストがあれば
+        print('Response:', res_str)                 # 変数res_strの内容を表示
+    else:
+        print('Done')                               # Doneを表示
 
