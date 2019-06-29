@@ -125,21 +125,24 @@ while True:
                 print('    Steps         =',sensors['Steps'],'歩')
                 print('    Battery Level =',sensors['Battery Level'],'%')
 
-    # クラウドへの送信処理
+    # Ambient（クラウド）へ送信するかどうかを判断
     if int(ambient_chid) == 0 or not isMedalAvail or time < ambient_interval / interval:
         time += 1
         continue
     time = 0
     isMedalAvail = False
+
+    # Ambientへ送るデータをbody_dictへ代入する
     body_dict['d1'] = sensors['Temperature']
     body_dict['d2'] = sensors['Humidity']
     body_dict['d3'] = sensors['Pressure']
     body_dict['d4'] = sensors['Illuminance']
-    body_dict['d5'] = sensors['Accelerometer']
-    body_dict['d6'] = sensors['Geomagnetic']
+    body_dict['d5'] = sensors['Accelerometer Z']    # Z軸：基板に垂直
+    body_dict['d6'] = sensors['Geomagnetic X']      # BLEモジュールが北側
     body_dict['d7'] = sensors['Steps']
     body_dict['d8'] = sensors['Battery Level']
 
+    # Ambientへ送信する
     print(head_dict)                                # 送信ヘッダhead_dictを表示
     print(body_dict)                                # 送信内容body_dictを表示
     post = urllib.request.Request(url_s, json.dumps(body_dict).encode(), head_dict)
