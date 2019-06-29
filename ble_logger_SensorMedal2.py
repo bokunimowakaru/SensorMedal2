@@ -41,7 +41,7 @@ while True:
     try:
         devices = scanner.scan(interval)
     except Exception as e:
-        print(e)
+        print("ERROR",e)
         if getpass.getuser() != 'root':
             print('使用方法: sudo', argv[0])
             exit()
