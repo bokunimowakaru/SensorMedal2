@@ -22,7 +22,12 @@
 
 bluepy (Bluetooth LE interface for Python)をインストールしてください  
 
-	sudo pip install bluepy
+	bluepyのインストール：
+		sudo pip3 install bluepy
+	
+	pipがインストールさせていないときは下記を実行してから再実行：
+		sudo apt-get update
+		sudo apt-get install python-pip python-dev libglib2.0-dev
 
 ## 実行方法
 

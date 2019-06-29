@@ -8,16 +8,22 @@
 #                                               Copyright (c) 2019 Wataru KUNINO
 ################################################################################
 
-# ご注意：
-# bluepy (Bluetooth LE interface for Python)をインストールしてください
-#   sudo pip install bluepy
+#【インストール方法】
+#   bluepy (Bluetooth LE interface for Python)をインストールしてください
+#       sudo pip3 install bluepy
 #
-# 実行するときは sudoを付与してください
-#   sudo ./ble_logger_SensorMedal2_ambient.py
+#   pip3 がインストールさせていない場合は、先に下記を実行
+#       sudo apt-get update
+#       sudo apt-get install python-pip python-dev libglib2.0-dev
 #
-# 参考文献：本プログラムを作成するにあたり下記を参考にしました
-# https://www.rohm.co.jp/documents/11401/3946483/sensormedal-evk-002_ug-j.pdf
-# https://ianharvey.github.io/bluepy-doc/scanner.html
+#【実行方法】
+#   実行するときは sudoを付与してください
+#       sudo ./ble_logger_SensorMedal2_ambient.py &
+#
+#【参考文献】
+#   本プログラムを作成するにあたり下記を参考にしました
+#   https://www.rohm.co.jp/documents/11401/3946483/sensormedal-evk-002_ug-j.pdf
+#   https://ianharvey.github.io/bluepy-doc/scanner.html
 
 ambient_chid='0000'                 # ここにAmbientで取得したチャネルIDを入力
 ambient_wkey='0123456789abcdef'     # ここにはライトキーを入力
