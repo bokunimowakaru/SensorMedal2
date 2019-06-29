@@ -12,9 +12,9 @@
 #   bluepy (Bluetooth LE interface for Python)をインストールしてください
 #       sudo pip3 install bluepy
 #
-#   pip3 がインストールさせていない場合は、先に下記を実行
+#   pip3 がインストールされていない場合は、先に下記を実行
 #       sudo apt-get update
-#       sudo apt-get install python-pip python-dev libglib2.0-dev
+#       sudo apt-get install python-pip libglib2.0-dev
 #
 #【実行方法】
 #   実行するときは sudoを付与してください
@@ -89,15 +89,15 @@ while True:
                 sensors['Accelerometer X'] = payval(10,2,True) / 4096
                 sensors['Accelerometer Y'] = payval(12,2,True) / 4096
                 sensors['Accelerometer Z'] = payval(14,2,True) / 4096
-                sensors['Accelerometer'] = sensors['Accelerometer X']\
-                                         + sensors['Accelerometer Y']\
-                                         + sensors['Accelerometer Z']
+                sensors['Accelerometer'] = (sensors['Accelerometer X'] ** 2\
+                                          + sensors['Accelerometer Y'] ** 2\
+                                          + sensors['Accelerometer Z'] ** 2) ** 0.5
                 sensors['Geomagnetic X'] = payval(16,2,True) / 10
                 sensors['Geomagnetic Y'] = payval(18,2,True) / 10
                 sensors['Geomagnetic Z'] = payval(20,2,True) / 10
-                sensors['Geomagnetic']   = sensors['Geomagnetic X']\
-                                         + sensors['Geomagnetic Y']\
-                                         + sensors['Geomagnetic Z']
+                sensors['Geomagnetic']  = (sensors['Geomagnetic X'] ** 2\
+                                         + sensors['Geomagnetic Y'] ** 2\
+                                         + sensors['Geomagnetic Z'] ** 2) ** 0.5
                 sensors['Pressure'] = payval(22,3) / 2048
                 sensors['Illuminance'] = payval(25,2) / 1.2
                 sensors['Magnetic'] = hex(payval(27))

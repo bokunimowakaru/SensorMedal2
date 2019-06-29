@@ -12,9 +12,9 @@
 #   bluepy (Bluetooth LE interface for Python)をインストールしてください
 #       sudo pip3 install bluepy
 #
-#   pip3 がインストールさせていない場合は、先に下記を実行
+#   pip3 がインストールされていない場合は、先に下記を実行
 #       sudo apt-get update
-#       sudo apt-get install python-pip python-dev libglib2.0-dev
+#       sudo apt-get install python-pip libglib2.0-dev
 #
 #【実行方法】
 #   実行するときは sudoを付与してください
