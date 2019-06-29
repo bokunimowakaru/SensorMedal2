@@ -47,6 +47,7 @@ def payval(num, bytes=1, sign=False):
 scanner = btle.Scanner()
 interval = 3 # 動作間隔 始めの1回目だけ3秒。その後、30秒
 while True:
+    # BLE受信処理
     try:
         devices = scanner.scan(interval)
     except Exception as e:
@@ -58,6 +59,8 @@ while True:
         continue
     if interval < 30:
         interval = 30
+
+    # 受信データについてBLEデバイス毎の処理
     for dev in devices:
         print("\nDevice %s (%s), RSSI=%d dB" % (dev.addr,dev.addrType,dev.rssi))
         isRohmMedal = False
@@ -67,6 +70,8 @@ while True:
             if desc == 'Short Local Name' and val[0:10] == 'ROHMMedal2':
                 isRohmMedal = True
             if isRohmMedal and desc == 'Manufacturer':
+
+                # センサ値を辞書型変数sensorsへ代入
                 sensors['ID'] = hex(payval(2,2))
                 sensors['Temperature'] = -45 + 175 * payval(4,2) / 65536
                 sensors['Humidity'] = 100 * payval(6,2) / 65536
@@ -90,10 +95,13 @@ while True:
                 sensors['Steps'] = payval(28,2)
                 sensors['Battery Level'] = payval(30)
 
+                # 画面へ表示
                 print('    ID            =',sensors['ID'])
                 print('    SEQ           =',sensors['SEQ'])
                 print('    Temperature   =',round(sensors['Temperature'],2),'℃')
                 print('    Humidity      =',round(sensors['Humidity'],2),'%')
+                print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
+                print('    Illuminance   =',round(sensors['Illuminance'],1),'lx')
                 print('    Accelerometer =',round(sensors['Accelerometer'],3),'g (',\
                                             round(sensors['Accelerometer X'],3),\
                                             round(sensors['Accelerometer Y'],3),\
@@ -102,15 +110,13 @@ while True:
                                             round(sensors['Geomagnetic X'],1),\
                                             round(sensors['Geomagnetic Y'],1),\
                                             round(sensors['Geomagnetic Z'],1),'uT)')
-                print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
-                print('    Illuminance   =',round(sensors['Illuminance'],1),'lx')
                 print('    Magnetic      =',sensors['Magnetic'])
                 print('    Steps         =',sensors['Steps'],'歩')
                 print('    Battery Level =',sensors['Battery Level'],'%')
 
+                # クラウドへの送信処理
                 if int(ambient_chid) == 0:
                     continue
-
                 body_dict['d1'] = sensors['Temperature']
                 body_dict['d2'] = sensors['Humidity']
                 body_dict['d3'] = sensors['Pressure']

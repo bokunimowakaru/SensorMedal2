@@ -13,17 +13,20 @@
 #   sudo pip install bluepy
 #
 # 実行するときは sudoを付与してください
-#   nohup sudo ./ble_logger_SensorMedal2_save.py &
+#   sudo ./ble_logger_SensorMedal2_save.py &
 #
 # 参考文献：本プログラムを作成するにあたり下記を参考にしました
 # https://www.rohm.co.jp/documents/11401/3946483/sensormedal-evk-002_ug-j.pdf
 # https://ianharvey.github.io/bluepy-doc/scanner.html
 
-interval = 3 # 動作間隔
+interval = 3                    # 動作間隔
+filename = 'SensorMedal2.csv'   # 保存するファイルの名前
+username = 'pi'                 # ファイル保存時の所有者名
 
 from bluepy import btle
 from sys import argv
 import getpass
+from shutil import chown
 from time import sleep
 
 import datetime
@@ -35,6 +38,7 @@ def save(filename, data):
         print(e)                                        # エラー内容を表示
     fp.write(data + '\n')                               # dataをファイルへ
     fp.close()                                          # ファイルを閉じる
+    chown(filename, username, username)                 # 所有者をpiユーザへ
 
 def payval(num, bytes=1, sign=False):
     global val
@@ -48,6 +52,7 @@ def payval(num, bytes=1, sign=False):
 
 scanner = btle.Scanner()
 while True:
+    # BLE受信処理
     try:
         devices = scanner.scan(interval)
     except Exception as e:
@@ -57,6 +62,8 @@ while True:
             exit()
         sleep(interval)
         continue
+
+    # 受信データについてBLEデバイス毎の処理
     for dev in devices:
         print("\nDevice %s (%s), RSSI=%d dB" % (dev.addr, dev.addrType, dev.rssi))
         isRohmMedal = False
@@ -66,6 +73,8 @@ while True:
             if desc == 'Short Local Name' and val[0:10] == 'ROHMMedal2':
                 isRohmMedal = True
             if isRohmMedal and desc == 'Manufacturer':
+
+                # センサ値を辞書型変数sensorsへ代入
                 sensors['ID'] = hex(payval(2,2))
                 sensors['Temperature'] = -45 + 175 * payval(4,2) / 65536
                 sensors['Humidity'] = 100 * payval(6,2) / 65536
@@ -89,10 +98,13 @@ while True:
                 sensors['Steps'] = payval(28,2)
                 sensors['Battery Level'] = payval(30)
 
+                # 画面へ表示
                 print('    ID            =',sensors['ID'])
                 print('    SEQ           =',sensors['SEQ'])
                 print('    Temperature   =',round(sensors['Temperature'],2),'℃')
                 print('    Humidity      =',round(sensors['Humidity'],2),'%')
+                print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
+                print('    Illuminance   =',round(sensors['Illuminance'],1),'lx')
                 print('    Accelerometer =',round(sensors['Accelerometer'],3),'g (',\
                                             round(sensors['Accelerometer X'],3),\
                                             round(sensors['Accelerometer Y'],3),\
@@ -101,18 +113,45 @@ while True:
                                             round(sensors['Geomagnetic X'],1),\
                                             round(sensors['Geomagnetic Y'],1),\
                                             round(sensors['Geomagnetic Z'],1),'uT)')
-                print('    Pressure      =',round(sensors['Pressure'],3),'hPa')
-                print('    Illuminance   =',round(sensors['Illuminance'],1),'lx')
                 print('    Magnetic      =',sensors['Magnetic'])
                 print('    Steps         =',sensors['Steps'],'歩')
                 print('    Battery Level =',sensors['Battery Level'],'%')
 
+                # 全センサ値のファイルを保存
                 date=datetime.datetime.today()
+                s = date.strftime('%Y/%m/%d %H:%M') + ', SensorMedal2'
+                s += ', ' + str(int(sensors['ID'],16))
+                s += ', ' + str(sensors['SEQ'])
+                s += ', ' + str(sensors['Temperature'])
+                s += ', ' + str(sensors['Humidity'])
+                s += ', ' + str(sensors['Pressure'])
+                s += ', ' + str(sensors['Illuminance'])
+                s += ', ' + str(sensors['Accelerometer'])
+                s += ', ' + str(sensors['Accelerometer X'])
+                s += ', ' + str(sensors['Accelerometer Y'])
+                s += ', ' + str(sensors['Accelerometer Z'])
+                s += ', ' + str(sensors['Geomagnetic'])
+                s += ', ' + str(sensors['Geomagnetic X'])
+                s += ', ' + str(sensors['Geomagnetic Y'])
+                s += ', ' + str(sensors['Geomagnetic Z'])
+                s += ', ' + str(int(sensors['Magnetic'],16))
+                s += ', ' + str(sensors['Steps'])
+                s += ', ' + str(sensors['Battery Level'])
+                save(filename, s)
+
+                # センサ個別値のファイルを保存
                 for sensor in sensors:
-                    filename = sensor.replace(' ', '_')
-                    s = date.strftime('%Y/%m/%d %H:%M') + ', ' + filename
-                    filename += '.csv'
-                    s += ', '
-                    s += str(sensors[sensor])
-                    print(s, '-> ' + filename) 
-                    save(filename, s)
+                    if sensor.find(' ') >= 0 or len(sensor) <= 5 or sensor == 'Magnetic':
+                        continue
+                    s = date.strftime('%Y/%m/%d %H:%M') + ', ' + sensor
+                    s += ', ' + str(sensors[sensor])
+                    if sensor == 'Accelerometer':
+                        s += ', ' + str(sensors['Accelerometer X'])
+                        s += ', ' + str(sensors['Accelerometer Y'])
+                        s += ', ' + str(sensors['Accelerometer Z'])
+                    if sensor == 'Geomagnetic':
+                        s += ', ' + str(sensors['Geomagnetic X'])
+                        s += ', ' + str(sensors['Geomagnetic Y'])
+                        s += ', ' + str(sensors['Geomagnetic Z'])
+                    print(s, '-> ' + sensor + '.csv') 
+                    save(sensor + '.csv', s)
