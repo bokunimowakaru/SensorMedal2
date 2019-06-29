@@ -20,6 +20,10 @@
 
 ## インストール方法
 
+本レポジトリをダウンロードして下さい  
+
+	git clone http://github.com/bokunimowakaru/SensorMedal2
+
 bluepy (Bluetooth LE interface for Python)をインストールしてください  
 
 	bluepyのインストール：
