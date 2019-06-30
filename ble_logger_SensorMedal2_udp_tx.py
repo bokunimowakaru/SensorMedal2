@@ -73,8 +73,6 @@ if argc >= 2:                                           # 入力パラメータ�
     udp_port = argv[1]                                  # ポート番号を設定
     if udp_port < 1 or udp_port > 65535:                # ポート1未満or65535超の時
         udp_port = 1024                                 # UDPポート番号を1024に
-else:
-    udp_port = 1024
 
 scanner = btle.Scanner()
 sensors = dict()
