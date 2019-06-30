@@ -20,6 +20,10 @@
 #   実行するときは sudoを付与してください
 #       sudo ./ble_logger_SensorMedal2_save.py &
 #
+#   ロガーとして継続的にバックグラウンドで実行する場合
+#       sudo nohup ./ble_logger_SensorMedal2_save.py >& /dev/null &
+#       tail -f SensorMedal2.csv
+#
 #【参考文献】
 #   本プログラムを作成するにあたり下記を参考にしました
 #   https://www.rohm.co.jp/documents/11401/3946483/sensormedal-evk-002_ug-j.pdf

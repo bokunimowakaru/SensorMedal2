@@ -16,9 +16,16 @@
 #       sudo apt-get update
 #       sudo apt-get install python-pip libglib2.0-dev
 #
+#【Ambientの設定】
+#   Ambient（https://ambidata.io/）でIDとライトキーを取得し、プログラム内の
+#   ambient_chidとambient_wkeyへ代入してください。
+#
 #【実行方法】
-#   実行するときは sudoを付与してください
+#   実行するときは sudoを付与してください(動作表示あり)
 #       sudo ./ble_logger_SensorMedal2_ambient.py &
+#
+#   ロガーとして継続的にバックグラウンドで実行する場合(動作表示なし)
+#       sudo nohup ./ble_logger_SensorMedal2_ambient.py >& /dev/null &
 #
 #【参考文献】
 #   本プログラムを作成するにあたり下記を参考にしました

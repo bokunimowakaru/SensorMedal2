@@ -7,16 +7,16 @@
 ## ファイル
 
 	基本動作：
-	ble_logger_SensorMedal2_basic.py  
+		ble_logger_SensorMedal2_basic.py  
 
 	表示のみ：
-	ble_logger_SensorMedal2.py  
+		ble_logger_SensorMedal2.py  
 	
 	保存機能付き：
-	ble_logger_SensorMedal2_save.py
+		ble_logger_SensorMedal2_save.py
 	
 	IoT用クラウドサービスAmbientへの送信機能付き：
-	ble_logger_SensorMedal2_ambient.py
+		ble_logger_SensorMedal2_ambient.py
 
 ## インストール方法
 
@@ -29,15 +29,22 @@ bluepy (Bluetooth LE interface for Python)をインストールしてくださ�
 	bluepyのインストール：
 		sudo pip3 install bluepy
 	
-	pipがインストールさせていないときは下記を実行してから再実行：
+	pipがインストールされていないとき：
 		sudo apt-get update
 		sudo apt-get install python-pip python-dev libglib2.0-dev
 
 ## 実行方法
 
-実行するときは sudoを付与してください  
+実行するときは以下のように sudoを付与してください  
 
-	sudo ./ble_logger_SensorMedal2.py
+	実行する時はsudoが必要：
+		sudo ./ble_logger_SensorMedal2.py
+
+ロガーとして継続的にバックグラウンドで実行する場合は、以下のように先頭に「sudo nohup」を、後方に「>& /dev/null &」を付与して実行ください。
+
+	ロガー機能の実行：
+		sudo nohup ./ble_logger_SensorMedal2_save.py >& /dev/null &
+		tail -f SensorMedal2.csv
 
 ## 実行結果の一例  
 
