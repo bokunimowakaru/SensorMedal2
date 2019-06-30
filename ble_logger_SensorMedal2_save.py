@@ -103,6 +103,7 @@ while True:
                 sensors['Magnetic'] = hex(payval(27))
                 sensors['Steps'] = payval(28,2)
                 sensors['Battery Level'] = payval(30)
+                sensors['RSSI'] = dev.rssi
 
                 # 画面へ表示
                 print('    ID            =',sensors['ID'])
@@ -122,6 +123,7 @@ while True:
                 print('    Magnetic      =',sensors['Magnetic'])
                 print('    Steps         =',sensors['Steps'],'歩')
                 print('    Battery Level =',sensors['Battery Level'],'%')
+                print('    RSSI          =',sensors['RSSI'],'dB')
 
                 # 全センサ値のファイルを保存
                 date=datetime.datetime.today()
@@ -143,6 +145,7 @@ while True:
                 s += ', ' + str(int(sensors['Magnetic'],16))
                 s += ', ' + str(sensors['Steps'])
                 s += ', ' + str(sensors['Battery Level'])
+                s += ', ' + str(sensors['RSSI'])
                 save(filename, s)
 
                 # センサ個別値のファイルを保存

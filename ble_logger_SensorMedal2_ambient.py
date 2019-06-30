@@ -105,6 +105,7 @@ while True:
                 sensors['Magnetic'] = hex(payval(27))
                 sensors['Steps'] = payval(28,2)
                 sensors['Battery Level'] = payval(30)
+                sensors['RSSI'] = dev.rssi
 
                 # 画面へ表示
                 print('    ID            =',sensors['ID'])

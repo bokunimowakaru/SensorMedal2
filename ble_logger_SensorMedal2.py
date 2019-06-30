@@ -89,6 +89,7 @@ while True:
                 sensors['Magnetic'] = hex(payval(27))
                 sensors['Steps'] = payval(28,2)
                 sensors['Battery Level'] = payval(30)
+                sensors['RSSI'] = dev.rssi
 
                 # 画面へ表示
                 print('    ID            =',sensors['ID'])
@@ -108,6 +109,7 @@ while True:
                 print('    Magnetic      =',sensors['Magnetic'])
                 print('    Steps         =',sensors['Steps'],'歩')
                 print('    Battery Level =',sensors['Battery Level'],'%')
+                print('    RSSI          =',sensors['RSSI'],'dB')
 
                 '''
                 for key, value in sorted(sensors.items(), key=lambda x:x[0]):
