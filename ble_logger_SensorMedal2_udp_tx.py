@@ -70,11 +70,11 @@ def send_udp(s):
 
 argc = len(argv)                                        # 引数の数をargcへ代入
 if argc >= 2:                                           # 入力パラメータ数の確認
-    port = argv[1]                                      # ポート番号を設定
-    if port < 1 or port > 65535:                        # ポート1未満or65535超の時
-        port = 1024                                     # UDPポート番号を1024に
+    udp_port = argv[1]                                  # ポート番号を設定
+    if udp_port < 1 or udp_port > 65535:                # ポート1未満or65535超の時
+        udp_port = 1024                                 # UDPポート番号を1024に
 else:
-    port = 1024
+    udp_port = 1024
 
 scanner = btle.Scanner()
 sensors = dict()
